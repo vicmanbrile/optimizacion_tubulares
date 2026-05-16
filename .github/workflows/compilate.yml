@@ -22,7 +22,7 @@ jobs:
       run: GOOS=windows GOARCH=amd64 go build -v -o calculadora.exe main.go
 
     - name: Upload Artifact
-      uses: actions/uses/upload-artifact@v4
+      uses: actions/upload-artifact@v4
       with:
         name: calculadora-windows
         path: calculadora.exe
