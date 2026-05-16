@@ -2,7 +2,7 @@ name: Build Go App
 
 on:
   push:
-    branches: [ main] 
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -18,5 +18,11 @@ jobs:
       with:
         go-version: '1.22'
 
-    - name: Build
-      run: go build -v -o calculadora main.go
+    - name: Build Windows EXE
+      run: GOOS=windows GOARCH=amd64 go build -v -o calculadora.exe main.go
+
+    - name: Upload Artifact
+      uses: actions/uses/upload-artifact@v4
+      with:
+        name: calculadora-windows
+        path: calculadora.exe
