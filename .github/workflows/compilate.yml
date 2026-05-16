@@ -3,6 +3,7 @@ name: Build Go App
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
 
@@ -21,8 +22,25 @@ jobs:
     - name: Build Windows EXE
       run: GOOS=windows GOARCH=amd64 go build -v -o calculadora.exe main.go
 
+    - name: Build Linux Binary
+      run: GOOS=linux GOARCH=amd64 go build -v -o calculadora main.go
+
+    - name: Build macOS Binary
+      run: GOOS=darwin GOARCH=amd64 go build -v -o calculadora-mac main.go
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: calculadora-windows
         path: calculadora.exe
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          calculadora.exe
+          calculadora
+          calculadora-mac
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
