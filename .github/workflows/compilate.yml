@@ -16,7 +16,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22'
+        go-version: '1.26'
 
     - name: Build Windows EXE
       run: GOOS=windows GOARCH=amd64 go build -v -o calculadora.exe main.go
