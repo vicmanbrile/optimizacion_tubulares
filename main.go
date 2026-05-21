@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -8,6 +9,9 @@ import (
 	"strconv"
 	"strings"
 )
+
+//go:embed tailwind.js
+var tailwindJS string
 
 type BarraResultado struct {
 	Numero      int
@@ -42,7 +46,7 @@ var htmlTemplate = `
 <head>
     <meta charset="UTF-8">
     <title>Optimización de Corte de Tubulares</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/tailwind.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased p-6">
     <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-md">
@@ -213,7 +217,7 @@ func optimizarCortes(w http.ResponseWriter, r *http.Request) {
 		cantidad, err2 := strconv.Atoi(stockCantidades[i])
 		if err1 == nil && err2 == nil {
 			if stockTipos[i] == "y" {
-				medida = (6220.80 - medida) / 10.0
+				medida = (6228.70 - medida) / 10.0
 			}
 			if medida > 0 {
 				for c := 0; c < cantidad; c++ {
@@ -302,7 +306,16 @@ func optimizarCortes(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func serveJS(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/javascript")
+	w.Write([]byte(tailwindJS))
+}
+
 func main() {
+	http.HandleFunc("/tailwind.js", serveJS)
 	http.HandleFunc("/", optimizarCortes)
+
+	fmt.Println("Servidor iniciado en http://localhost:80")
+	fmt.Println("Ejecutable empaquetado usando go:embed (100% autocontenido).")
 	http.ListenAndServe(":8080", nil)
 }
